@@ -22,7 +22,7 @@ function varargout = pd_detector(varargin)
 
 % Edit the above text to modify the response to help pd_detector
 
-% Last Modified by GUIDE v2.5 05-Mar-2018 15:08:33
+% Last Modified by GUIDE v2.5 29-Mar-2018 11:53:37
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -209,8 +209,30 @@ set( handles.menu_quit, 'UserData', thisExperimentalResults );
 
 % --------------------------------------------------------------------
 function menu_quit_Callback(hObject, eventdata, handles)
-thisResults = get( hObject, 'UserData' );
-x = inputdlg('Enter file name to save experimental results to:',...
+% Switch that checks to make sure they saved their data, first prompt
+answer = questdlg('Unsaved data will be lost. Would you like to save the results?', ...
+	'Confirm to Quit', ...
+	'Yes','No','Cancel','Yes');
+% Handle response
+switch answer
+    case 'Yes'
+        % Just call the saveresults call back from here, then quit
+        menu_saveresults_Callback(hObject, eventdata, handles);
+        % MATLAB doesn't fall through like other languages, need to mirror
+        % close all force here
+        close all force
+    case 'No'
+        close all force
+    % If they hit cancel just do nothing
+end
+
+% --------------------------------------------------------------------
+function menu_saveresults_Callback(hObject, eventdata, handles)
+% Results are located in the user data of 'menu_quit'
+thisResults = get( handles.menu_quit, 'UserData' );
+% Prompt use for name to save results to
+x = inputdlg('Enter file name to save experimental results to. There is no need to add the file extension (".xls"), it will be added automatically.',...
              'Filename', [1 50]);
-xlswrite( [ cell2mat(x), '.xls' ], thisResults.data );
-close all force
+if ~isempty(x)
+    xlswrite( [ cell2mat(x), '.xls' ], thisResults.data );
+end
