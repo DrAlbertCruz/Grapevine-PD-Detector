@@ -5,6 +5,7 @@
 This requires the following:
 1. An up to date version of MATLAB with the neural network toolkit, and GUIDE
 2. A Nvidia graphics card
+3. Microsoft Excel
 
 ## Support for this work
 
